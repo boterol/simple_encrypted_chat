@@ -2,6 +2,7 @@ import com.zeroc.Ice.Communicator;
 import com.zeroc.Ice.Util;
 import Demo.*;
 import java.net.InetAddress;
+import java.util.Random;
 import java.io.*;
 
 
@@ -12,6 +13,13 @@ import java.io.*;
  * Read the documentation cautiously to understand the code.
  */
 public class Client{
+	public static final int[] primeNumbers = {
+        5, 7, 11, 13, 17, 19, 23
+    };
+
+	private static int strangersValue=-1;
+
+	
 	public static void main(String[] args){
 		// This try block is used to initialize the connection with the server by using the information in the client.cfg file.
 		try (Communicator communicator = Util.initialize(args, "client.cfg")){
@@ -49,25 +57,36 @@ public class Client{
 
 					// This line is used to get the hostname of the client. The hostname is used to identify the client in the server side.
 					String hostname = InetAddress.getLocalHost().getHostName();
+					System.out.println("HOSTNAME: "+hostname);
 					hostname = "user" + "@" + hostname;
 
 					// This line is used to register the client in the server side. The client must be registered in the server side
 					chatServerPrx.registerClient(hostname, client); // This is the way the server admits any amount of clients.
 					
-					String userInput = "Default text";
-					System.out.print("Enter a message (type 'exit' to quit): ");
+					//----------PROTOCOLO DE ENCRIPCIÓN----------
+					System.out.println("--------------Encryption Protocol Started--------------");
+					System.out.println("Waiting for another client to connect...");
 
-					while ((userInput = reader.readLine()) != null) {
-						String result = chatServerPrx.sendMessage(userInput+"-"+hostname);
+					int secretValue=generateSecretValue(chatServerPrx);
 
-						System.out.println(result);
-
-						if (userInput.equalsIgnoreCase("exit")){
-							break;
-						}
-
+					System.out.println("SecretValue: "+secretValue);
+					//secretValue=-1 means that there was a timeout reaching the other clients value.
+					//secretValue!=-1 means succes at stablishing the protocol 
+					if(secretValue!=-1){
+						String userInput = "Default text";
 						System.out.print("Enter a message (type 'exit' to quit): ");
-
+	
+						while ((userInput = reader.readLine()) != null) {
+							String result = chatServerPrx.sendMessage(userInput+"-"+hostname);
+	
+							System.out.println(result);
+	
+							if (userInput.equalsIgnoreCase("exit")){
+								break;
+							}
+	
+							System.out.print("Enter a message (type 'exit' to quit): ");
+						}
 					}
 
 					// This line is used to unregister the client in the server side. The client must be unregistered in the server side
@@ -105,5 +124,63 @@ public class Client{
 
 		return "";
   }
+
+	private static int generateSecretValue(ChatServerPrx chatServerPrx){
+		//gets g and n public values from server 
+		String strGN=chatServerPrx.getGN();
+		System.out.println("G,N: "+strGN);
+		String[] gn=strGN.split(",");
+
+		//computates the first step of the deffie hellman protocol.
+		//myValue=g^x mod n
+		int g=Integer.parseInt(gn[0]);
+		int n=Integer.parseInt(gn[1]);
+		int x = new Random().nextInt(40)+8;
+		
+		int myValue=DeffieHellman.firstComputation(g, n, x);
+		
+		System.out.println("MYVALUE: "+myValue);
+		//sends it to the server so the other client can acces it
+		chatServerPrx.SetProtocolValues(myValue);
+		
+		System.out.println("G: "+g+" N: "+n+" X: "+x);
+
+		//verifies if the other client has already uploaded his value to the server.
+		//if the other client has, the value gets processed and stored in the variable strangersValue.
+		//if the other client has not, it retries.
+		long startTime = System.currentTimeMillis();
+		long timeout = 60000; // 1 minute
+
+		while (strangersValue == -1) {
+			if (System.currentTimeMillis() - startTime > timeout) {
+				System.out.println("Timed out waiting for stranger's value.");
+				return -1;
+			}
+			try {
+				String strValues=chatServerPrx.getProtocolValues();
+				String[] splitted=strValues.split(",");
+				if(splitted.length>1){
+					int counter=0;
+					for(String str: splitted){
+						counter++;
+						if(Integer.parseInt(str) != myValue){
+							strangersValue=Integer.parseInt(str);
+							break;
+						} else if(counter==2){
+							strangersValue=myValue;
+						}
+					}
+				}
+				Thread.sleep(1000); // Check every 0.5s
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+		}
+
+		//secret value computation: strangersValue^x mod n
+		int secretValue=DeffieHellman.computeSecretValue(strangersValue, n, x);
+
+		return secretValue;
+	}
 
 }

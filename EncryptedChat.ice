@@ -19,6 +19,9 @@ module Demo {
         string sendMessage(string msg);
         void registerClient(string hostname, ChatClient* proxy);
         void unregisterClient(string hostname);
+        void SetProtocolValues(int value);
+        string getProtocolValues();
+        string getGN();
         void shutdown();
     }
 }

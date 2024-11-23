@@ -4,6 +4,9 @@ import java.io.*;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
 
 /**
  * This class implements the ChatServer interface and is used to handle the
@@ -14,11 +17,16 @@ import java.io.InputStreamReader;
  * Every method declared in the interface must have "current" as the last parameter.
  */
 public class ChatServerI implements ChatServer {
+  public static final int[] primeNumbers = {
+    5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47, 53, 59, 61, 67, 71
+  };
+  ArrayList<Integer> protocolPublicValues = new ArrayList<>();
   @Override
   public void unregisterClient(String hostName, com.zeroc.Ice.Current current) {
     //new client disconnected
     Server.unregisterClient(hostName);
   }
+
 
   @Override
   public void registerClient(String hostName, ChatClientPrx callback, com.zeroc.Ice.Current current) {
@@ -26,6 +34,28 @@ public class ChatServerI implements ChatServer {
     Server.registerClient(hostName, callback);
   }
 
+  @Override
+  public void SetProtocolValues(int value, com.zeroc.Ice.Current current) {
+    protocolPublicValues.add(value);
+  }
+
+  
+  @Override
+  public String getProtocolValues(com.zeroc.Ice.Current current) {
+    String output="";
+    if(protocolPublicValues.size()==2){
+      output=protocolPublicValues.get(0)+","+protocolPublicValues.get(1);
+    } else if (protocolPublicValues.size()>0){
+      output=protocolPublicValues.get(0).toString();
+    }
+    return output;
+  }
+
+  @Override
+  public String getGN(com.zeroc.Ice.Current current){
+    
+    return String.valueOf(Server.gn[0])+","+String.valueOf(Server.gn[1]);
+  }
 
   /**
    * This method is used to execute a command on the server. The command is
@@ -48,21 +78,21 @@ public class ChatServerI implements ChatServer {
    */
   @Override
   public String sendMessage(String msg, com.zeroc.Ice.Current current) {
-    String clientHN = msg.split("-")[1];
-    msg = msg.split("-")[0];
+      String clientHN = msg.split("-")[1];
+      msg = msg.split("-")[0];
 
-    final String finalMsg = msg;
-    final String finalClientHN = clientHN;
+      final String finalMsg = msg;
+      final String finalClientHN = clientHN;
 
-    if (msg.length() == 0) {
-      return "";
-    }
+      if (msg.length() == 0) {
+          return msg;
+      }
 
-    System.out.println(String.format("\n[NEW] - %s said: \"%s\"\n", clientHN, msg));
+      System.out.println(String.format("\n[NEW] - %s said: \"%s\"\n", clientHN, msg));
 
-    broadCastMessage(clientHN + ": " + msg);
+      broadCastMessage(clientHN + ": " + msg);
 
-    return ""; //clientHN + " (Me): " + msg
+      return ""; //clientHN + " (Me): " + msg
   }
 
   

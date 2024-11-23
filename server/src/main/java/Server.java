@@ -12,6 +12,10 @@ import Demo.*;
 public class Server {
     private static int clientCount = 0;
     private static Map<String, ChatClientPrx> registeredClients = new HashMap<>();
+    public static int[] gn;
+    public static final int[] primeNumbers = {
+        5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47, 53, 59, 61, 67, 71
+    };
 
     public static void main(String[] args) {
 
@@ -24,6 +28,8 @@ public class Server {
             com.zeroc.Ice.Object object = new ChatServerI();
             adapter.add(object, com.zeroc.Ice.Util.stringToIdentity("SimpleChat"));
             adapter.activate();
+
+            setGN();
 
             System.out.println("Server online. Waiting for clients...");
             communicator.waitForShutdown();
@@ -79,6 +85,11 @@ public class Server {
      */
     public static synchronized ArrayList<ChatClientPrx> getAllChatClients(){
         return new ArrayList<>(registeredClients.values());
+    }
+    
+    //sets the pair of prime values g and n. 
+    public static void setGN(){
+        gn = DeffieHellman.get2RandomNumsFromArray(primeNumbers);
     }
     
 
