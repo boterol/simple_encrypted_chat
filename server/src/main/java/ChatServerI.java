@@ -17,10 +17,9 @@ import java.util.Random;
  * Every method declared in the interface must have "current" as the last parameter.
  */
 public class ChatServerI implements ChatServer {
-  public static final int[] primeNumbers = {
-    5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47, 53, 59, 61, 67, 71
-  };
+
   ArrayList<Integer> protocolPublicValues = new ArrayList<>();
+  
   @Override
   public void unregisterClient(String hostName, com.zeroc.Ice.Current current) {
     //new client disconnected
@@ -34,12 +33,14 @@ public class ChatServerI implements ChatServer {
     Server.registerClient(hostName, callback);
   }
 
+  //sets the public calculted values fot the 2 clients to acces in the global vaiable protocolValues
   @Override
   public void SetProtocolValues(int value, com.zeroc.Ice.Current current) {
     protocolPublicValues.add(value);
   }
 
-  
+  //gets the values ans returns them as sting because ice do not support array data types. 
+  //this values will be processed in the client side
   @Override
   public String getProtocolValues(com.zeroc.Ice.Current current) {
     String output="";
@@ -51,6 +52,7 @@ public class ChatServerI implements ChatServer {
     return output;
   }
 
+  //gets the public G and N values. 
   @Override
   public String getGN(com.zeroc.Ice.Current current){
     

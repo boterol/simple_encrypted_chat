@@ -12,7 +12,9 @@ import Demo.*;
 public class Server {
     private static int clientCount = 0;
     private static Map<String, ChatClientPrx> registeredClients = new HashMap<>();
+    //public G and N values
     public static int[] gn;
+
     public static final int[] primeNumbers = {
         5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47, 53, 59, 61, 67, 71
     };
@@ -87,7 +89,7 @@ public class Server {
         return new ArrayList<>(registeredClients.values());
     }
     
-    //sets the pair of prime values g and n. 
+    //sets a random pair of prime values g and n from the prime numbers list.  
     public static void setGN(){
         gn = DeffieHellman.get2RandomNumsFromArray(primeNumbers);
     }
