@@ -97,6 +97,11 @@ public class ChatServerI implements ChatServer {
       return ""; //clientHN + " (Me): " + msg
   }
 
+  @Override
+  public int getClientCount(com.zeroc.Ice.Current current){
+    return Server.getClientCount();
+  }
+
   
   /**
    * This method is used to send a message to all clients. The message is

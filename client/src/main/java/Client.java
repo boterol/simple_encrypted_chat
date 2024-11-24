@@ -58,7 +58,8 @@ public class Client{
 					// This line is used to get the hostname of the client. The hostname is used to identify the client in the server side.
 					String hostname = InetAddress.getLocalHost().getHostName();
 					System.out.println("HOSTNAME: "+hostname);
-					hostname = "user" + "@" + hostname;
+					int client_number = chatServerPrx.getClientCount();
+					hostname = "user" + "@" + hostname + "_" + client_number;
 
 					// This line is used to register the client in the server side. The client must be registered in the server side
 					chatServerPrx.registerClient(hostname, client); // This is the way the server admits any amount of clients.

@@ -15,6 +15,6 @@ public final class ChatClientI implements ChatClient {
     @Override
     public void receiveMessage(String msg, com.zeroc.Ice.Current current)
     {
-        System.out.println(msg);
+        System.out.println("\n" + msg);
     }
 }

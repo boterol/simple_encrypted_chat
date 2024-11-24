@@ -43,7 +43,7 @@ public class Server {
      */
     public static synchronized void registerClient(String hostname, ChatClientPrx client) {
         clientCount++;
-        registeredClients.put(hostname + clientCount, client);
+        registeredClients.put(hostname, client);
         System.out.println(hostname + " has joined! Clients connected to the chat: " + clientCount);
     }
 
