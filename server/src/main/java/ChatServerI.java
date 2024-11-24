@@ -111,7 +111,6 @@ public class ChatServerI implements ChatServer {
    * method.
    */
   private void broadCastMessage(String msg, String clientHN) {
-    System.out.println("host" + clientHN);
     Map<String, ChatClientPrx> clients = Server.getAllChatClients();
     for (String hostname : clients.keySet()) {
       if(!hostname.equals(clientHN)){

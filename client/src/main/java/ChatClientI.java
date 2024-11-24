@@ -20,7 +20,10 @@ public final class ChatClientI implements ChatClient {
      */
     @Override
     public void receiveMessage(String msg, com.zeroc.Ice.Current current)
-    {
+    {   
+        if (chatUI == null) {
+            return;
+        }
         Platform.runLater(() -> chatUI.receiveMessage(msg));
     }
 }

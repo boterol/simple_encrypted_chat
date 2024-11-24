@@ -77,6 +77,7 @@ public class Client{
 					// This line is used to register the client in the server side. The client must be registered in the server side
 					chatServerPrx.registerClient(hostname, client); // This is the way the server admits any amount of clients.
 
+
 					//----------PROTOCOLO DE ENCRIPCIÓN----------
 					System.out.println("--------------Encryption Protocol Started--------------");
 					System.out.println("Waiting for another client to connect...");
@@ -117,27 +118,6 @@ public class Client{
 			}
 		}
 	}
-
-	/**
-	 * This method is used to get the username of the client. This method is used to get the username of the client
-	 */
-	private static String whoami() {
-		try {
-			ProcessBuilder processBuilder = new ProcessBuilder("whoami");
-			processBuilder.redirectErrorStream(true);
-
-			Process process = processBuilder.start();
-
-			BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
-			String line = reader.readLine();
-			return line;
-
-		} catch (IOException  e) {
-				e.printStackTrace();
-		}
-
-		return "";
-  }
 
 	private static int generateSecretValue(ChatServerPrx chatServerPrx){
 		//gets g and n public values from server 
