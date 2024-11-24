@@ -7,6 +7,8 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * This class implements the ChatServer interface and is used to handle the
@@ -92,7 +94,7 @@ public class ChatServerI implements ChatServer {
 
       System.out.println(String.format("\n[NEW] - %s said: \"%s\"\n", clientHN, msg));
 
-      broadCastMessage(clientHN + ": " + msg);
+      broadCastMessage(clientHN + ": " + msg, clientHN);
 
       return ""; //clientHN + " (Me): " + msg
   }
@@ -108,12 +110,16 @@ public class ChatServerI implements ChatServer {
    * received as a string and is sent to all clients using the receiveMessage
    * method.
    */
-  private void broadCastMessage(String msg) {
-    for (ChatClientPrx client : Server.getAllChatClients()) {
-      try {
-        client.receiveMessage(msg);
-      } catch (Exception e) {
-        e.printStackTrace();
+  private void broadCastMessage(String msg, String clientHN) {
+    System.out.println("host" + clientHN);
+    Map<String, ChatClientPrx> clients = Server.getAllChatClients();
+    for (String hostname : clients.keySet()) {
+      if(!hostname.equals(clientHN)){
+        try {
+          clients.get(hostname).receiveMessage(msg);
+        } catch (Exception e) {
+          e.printStackTrace();
+        }
       }
     }
   }

@@ -1,6 +1,8 @@
 plugins {
+    id 'java'
     id 'com.zeroc.gradle.ice-builder.slice' version '1.4.5' apply false
 }
+
 subprojects {
     apply plugin: 'java'
     apply plugin: 'com.zeroc.gradle.ice-builder.slice'
@@ -16,14 +18,19 @@ subprojects {
     }
 
     dependencies {
-        compile 'com.zeroc:ice:3.7.6'
+        implementation 'com.zeroc:ice:3.7.6'
+        
+        // Dependencias para JavaFX
+        implementation "org.openjfx:javafx-base:17.0.8:${System.getProperty('os.name').toLowerCase()}"
+        implementation "org.openjfx:javafx-controls:17.0.8:${System.getProperty('os.name').toLowerCase()}"
+        implementation "org.openjfx:javafx-graphics:17.0.8:${System.getProperty('os.name').toLowerCase()}"
     }
+
     jar {
         manifest {
             attributes(
-                "Main-Class" : project.name.capitalize(),
-                "Class-Path": configurations.runtimeClasspath.resolve().collect {
-                it.toURI() }.join(' ')
+                'Main-Class': project.name.capitalize(),
+                'Class-Path': configurations.runtimeClasspath.collect { it.toURI().toString() }.join(' ')
             )
         }
     }

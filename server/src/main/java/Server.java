@@ -85,8 +85,8 @@ public class Server {
     /**
      * This method is used to get all the clients connected to the server.
      */
-    public static synchronized ArrayList<ChatClientPrx> getAllChatClients(){
-        return new ArrayList<>(registeredClients.values());
+    public static synchronized Map<String, ChatClientPrx> getAllChatClients(){
+        return registeredClients;
     }
     
     //sets a random pair of prime values g and n from the prime numbers list.  

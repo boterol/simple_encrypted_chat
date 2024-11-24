@@ -1,0 +1,28 @@
+.root {
+  -fx-background-color: #f4f4f4;
+  -fx-padding: 10px;
+}
+
+.text-area {
+  -fx-font-size: 14px;
+  -fx-control-inner-background: #fff;
+  -fx-border-color: #dcdcdc;
+  -fx-border-radius: 10px;
+  -fx-background-radius: 10px;
+}
+
+.text-field {
+  -fx-font-size: 14px;
+  -fx-control-inner-background: #ffffff;
+  -fx-border-color: #dcdcdc;
+  -fx-border-radius: 10px;
+  -fx-background-radius: 10px;
+}
+
+.button {
+  -fx-background-color: #0078d7;
+  -fx-text-fill: white;
+  -fx-font-size: 14px;
+  -fx-padding: 5px 20px;
+  -fx-background-radius: 10px;
+}

@@ -4,6 +4,8 @@ import Demo.*;
 import java.net.InetAddress;
 import java.util.Random;
 import java.io.*;
+import javafx.application.Platform;
+import javafx.stage.Stage;
 
 
 /**
@@ -16,6 +18,8 @@ public class Client{
 	public static final int[] primeNumbers = {
         5, 7, 11, 13, 17, 19, 23
     };
+
+	private static ChatUI chatUI;
 
 	private static int strangersValue=-1;
 
@@ -34,12 +38,19 @@ public class Client{
 					throw new Error("Invalid proxy");
 				}
 
+				// Inicia JavaFX en un hilo separado
+				Platform.startup(() -> {
+					chatUI = new ChatUI();
+					chatUI.setChatServerPrx(chatServerPrx);
+					chatUI.start(new Stage());
+				});
+
 				//This is the adapter for the chat client this name can be anything as long as it matches with the name used in the client.cfg file
 				com.zeroc.Ice.ObjectAdapter adapter = communicator.createObjectAdapter("Chat.Client"); 
 
 				//This is the object that will be used to create the proxy for the client. ChatClientI is the class that implements the ChatClient interface.
 				//There is no need to import the ChatClientI class because it is in the same package as the Client class.
-				com.zeroc.Ice.Object object = new ChatClientI();
+				com.zeroc.Ice.Object object = new ChatClientI(chatUI);
 
 				//This line is used to add the object to the adapter, wich is the object that will be used to create the proxy for the client.
 				adapter.add(object, com.zeroc.Ice.Util.stringToIdentity("chatClient"));
@@ -61,9 +72,11 @@ public class Client{
 					int client_number = chatServerPrx.getClientCount();
 					hostname = "user" + "@" + hostname + "_" + client_number;
 
+					chatUI.setHostname(hostname);
+
 					// This line is used to register the client in the server side. The client must be registered in the server side
 					chatServerPrx.registerClient(hostname, client); // This is the way the server admits any amount of clients.
-					
+
 					//----------PROTOCOLO DE ENCRIPCIÓN----------
 					System.out.println("--------------Encryption Protocol Started--------------");
 					System.out.println("Waiting for another client to connect...");
