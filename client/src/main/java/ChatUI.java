@@ -75,6 +75,7 @@ public class ChatUI extends Application {
         if (!message.isEmpty()) {
             try {
                 // Envía el mensaje al servidor
+                message = AESMaganement.encryptMessage(Client.hashedKey, message);
                 chatServerPrx.sendMessage(message + "-" + hostname);
                 
                 // Añadir el mensaje del usuario a la ventana del chat

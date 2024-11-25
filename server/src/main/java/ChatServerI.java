@@ -82,8 +82,8 @@ public class ChatServerI implements ChatServer {
    */
   @Override
   public String sendMessage(String msg, com.zeroc.Ice.Current current) {
-      String clientHN = msg.split("-")[1];
-      msg = msg.split("-")[0];
+      String clientHN = msg.split("696969")[1];
+      msg = msg.split("696969")[0];
 
       final String finalMsg = msg;
       final String finalClientHN = clientHN;

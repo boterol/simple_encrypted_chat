@@ -15,13 +15,12 @@ import javafx.stage.Stage;
  * Read the documentation cautiously to understand the code.
  */
 public class Client{
-	public static final int[] primeNumbers = {
-        5, 7, 11, 13, 17, 19, 23
-    };
 
 	private static ChatUI chatUI;
 
 	private static int strangersValue=-1;
+
+	public static byte[] hashedKey;
 
 	
 	public static void main(String[] args){
@@ -85,6 +84,10 @@ public class Client{
 					int secretValue=generateSecretValue(chatServerPrx);
 
 					System.out.println("SecretValue: "+secretValue);
+					hashedKey=AESMaganement.hashKey("mvLBiZsiTbGwrfJB");
+
+
+
 					//secretValue=-1 means that there was a timeout reaching the other clients value.
 					//secretValue!=-1 means succes at stablishing the protocol 
 					if(secretValue!=-1){
@@ -92,8 +95,8 @@ public class Client{
 						System.out.print("Enter a message (type 'exit' to quit): ");
 	
 						while ((userInput = reader.readLine()) != null) {
-							String result = chatServerPrx.sendMessage(userInput+"-"+hostname);
-	
+							String message = AESMaganement.encryptMessage(hashedKey, userInput);
+							String result = chatServerPrx.sendMessage(message+"696969"+hostname);
 							System.out.println(result);
 	
 							if (userInput.equalsIgnoreCase("exit")){
@@ -165,16 +168,18 @@ public class Client{
 						}
 					}
 				}
-				Thread.sleep(1000); // Check every 0.5s
+				Thread.sleep(1000); // Check every 1s
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
 		}
+
+
 
 		//secret value computation: strangersValue^x mod n
 		int secretValue=DeffieHellman.computeSecretValue(strangersValue, n, x);
 
 		return secretValue;
 	}
-
+	
 }

@@ -19,11 +19,19 @@ public final class ChatClientI implements ChatClient {
      * @param current The current object
      */
     @Override
-    public void receiveMessage(String msg, com.zeroc.Ice.Current current)
-    {   
-        if (chatUI == null) {
-            return;
+    public void receiveMessage(String msg, com.zeroc.Ice.Current current){   
+        try {
+            msg=msg.split(" ")[1];
+            String decryptedMessage=AESMaganement.decryptMessage(Client.hashedKey, msg);
+            System.out.println("ECNRYPTED: "+ msg+"\n");
+            System.out.println("DECRYPTED: "+ decryptedMessage+"\n");
+            if (chatUI == null) {
+                return;
+            }
+            //Platform.runLater(() -> chatUI.receiveMessage(decryptedMessage));
+        } catch (Exception e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
         }
-        Platform.runLater(() -> chatUI.receiveMessage(msg));
     }
 }
