@@ -71,15 +71,15 @@ public class ChatUI extends Application {
     }
 
     private void sendMessage() {
-        String message = inputField.getText();
-        if (!message.isEmpty()) {
+        String message_original = inputField.getText();
+        if (!message_original.isEmpty()) {
             try {
                 // Envía el mensaje al servidor
-                message = AESMaganement.encryptMessage(Client.hashedKey, message);
-                chatServerPrx.sendMessage(message + "-" + hostname);
+                String message = AESMaganement.encryptMessage(Client.hashedKey, message_original);
+                chatServerPrx.sendMessage(message + "696969" + hostname);
                 
                 // Añadir el mensaje del usuario a la ventana del chat
-                addMessage("You: " + message, true);  // Mensaje propio
+                addMessage("You: " + message_original, true);  // Mensaje propio
 
                 // Limpiar el campo de texto
                 inputField.clear();

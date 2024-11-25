@@ -28,7 +28,7 @@ public final class ChatClientI implements ChatClient {
             if (chatUI == null) {
                 return;
             }
-            //Platform.runLater(() -> chatUI.receiveMessage(decryptedMessage));
+            Platform.runLater(() -> chatUI.receiveMessage(decryptedMessage));
         } catch (Exception e) {
             // TODO Auto-generated catch block
             e.printStackTrace();

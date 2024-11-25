@@ -82,11 +82,9 @@ public class ChatServerI implements ChatServer {
    */
   @Override
   public String sendMessage(String msg, com.zeroc.Ice.Current current) {
+      System.out.println("-------------------" + msg);
       String clientHN = msg.split("696969")[1];
       msg = msg.split("696969")[0];
-
-      final String finalMsg = msg;
-      final String finalClientHN = clientHN;
 
       if (msg.length() == 0) {
           return msg;
@@ -123,36 +121,5 @@ public class ChatServerI implements ChatServer {
     }
   }
 
-  /**
-   * This method is used to execute a command on the server. The command is
-   * received as a string and is executed using the ProcessBuilder class. The
-   * output of the command is returned as a string.
-   */
-  private String executeCommand(String command) {
-    String output = "";
-    try {
-      ProcessBuilder processBuilder = new ProcessBuilder(command.split(" "));
-      processBuilder.redirectErrorStream(true);
-
-      Process process = processBuilder.start();
-
-      BufferedReader reader = new BufferedReader(
-        new InputStreamReader(process.getInputStream())
-      );
-      String line;
-      while ((line = reader.readLine()) != null) {
-        output = output + line + "\n";
-      }
-
-      int exitCode = process.waitFor();
-
-      output =
-        output + "El comando ha terminado con código de salida: " + exitCode;
-    } catch (IOException | InterruptedException e) {
-      e.printStackTrace();
-      return "No fue posible ejecutar el comando";
-    }
-    return output;
-  }
   
 }
