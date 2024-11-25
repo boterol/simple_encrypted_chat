@@ -1,14 +1,7 @@
-import Demo.*;
-import com.zeroc.Ice.Current;
-import java.io.*;
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
 import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
-import java.util.HashMap;
 import java.util.Map;
+import Demo.ChatClientPrx;
+import Demo.ChatServer;
 
 /**
  * This class implements the ChatServer interface and is used to handle the

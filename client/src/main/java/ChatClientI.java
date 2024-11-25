@@ -1,6 +1,5 @@
-import com.zeroc.Ice.Current;
+import Demo.ChatClient;
 import javafx.application.Platform;
-import Demo.*;
 
 /**
  * This class implements the ChatClient interface defined in the file "CallBackModule.ice"
@@ -26,11 +25,11 @@ public final class ChatClientI implements ChatClient {
             System.out.println("ECNRYPTED: "+ msg+"\n");
             System.out.println("DECRYPTED: "+ decryptedMessage+"\n");
             if (chatUI == null) {
+                System.out.println("ChatUI is null"); 
                 return;
             }
             Platform.runLater(() -> chatUI.receiveMessage(decryptedMessage));
         } catch (Exception e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         }
     }

@@ -3,6 +3,7 @@ import com.zeroc.Ice.Util;
 import Demo.*;
 import java.net.InetAddress;
 import java.util.Random;
+import java.util.concurrent.CountDownLatch;
 import java.io.*;
 import javafx.application.Platform;
 import javafx.stage.Stage;
@@ -22,8 +23,10 @@ public class Client{
 
 	public static byte[] hashedKey;
 
+	private static final CountDownLatch latch = new CountDownLatch(1);
+
 	
-	public static void main(String[] args){
+	public static void main(String[] args) throws InterruptedException{
 		// This try block is used to initialize the connection with the server by using the information in the client.cfg file.
 		try (Communicator communicator = Util.initialize(args, "client.cfg")){
 			
@@ -42,11 +45,13 @@ public class Client{
 					chatUI = new ChatUI();
 					chatUI.setChatServerPrx(chatServerPrx);
 					chatUI.start(new Stage());
-				});
+					latch.countDown(); // Libera el latch cuando ChatUI esté listo
+			});
 
 				//This is the adapter for the chat client this name can be anything as long as it matches with the name used in the client.cfg file
 				com.zeroc.Ice.ObjectAdapter adapter = communicator.createObjectAdapter("Chat.Client"); 
 
+				latch.await();
 				//This is the object that will be used to create the proxy for the client. ChatClientI is the class that implements the ChatClient interface.
 				//There is no need to import the ChatClientI class because it is in the same package as the Client class.
 				com.zeroc.Ice.Object object = new ChatClientI(chatUI);
@@ -91,19 +96,9 @@ public class Client{
 					//secretValue=-1 means that there was a timeout reaching the other clients value.
 					//secretValue!=-1 means succes at stablishing the protocol 
 					if(secretValue!=-1){
-						String userInput = "Default text";
 						System.out.print("Enter a message (type 'exit' to quit): ");
-	
-						while ((userInput = reader.readLine()) != null) {
-							String message = AESMaganement.encryptMessage(hashedKey, userInput);
-							String result = chatServerPrx.sendMessage(message+"696969"+hostname);
-							System.out.println(result);
-	
-							if (userInput.equalsIgnoreCase("exit")){
-								break;
-							}
-	
-							System.out.print("Enter a message (type 'exit' to quit): ");
+						while (true) {
+							
 						}
 					}
 
